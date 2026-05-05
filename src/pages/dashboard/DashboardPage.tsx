@@ -21,13 +21,12 @@ const workflowData = [
   { stage: 'Submission',     cases: 16 },
 ]
 
-const payerData = [
-  { name: 'United Healthcare (40%)', value: 40 },
-  { name: 'Blue Cross (30%)',        value: 30 },
-  { name: 'Aetna (20%)',             value: 20 },
-  { name: 'Other (10%)',             value: 10 },
+const payerData: { name: string; value: number; color: string }[] = [
+  { name: 'United Healthcare (40%)', value: 40, color: '#5C3FEE' },
+  { name: 'Blue Cross (30%)',        value: 30, color: '#15B8A6' },
+  { name: 'Aetna (20%)',             value: 20, color: '#F59E0B' },
+  { name: 'Other (10%)',             value: 10, color: '#C4C4C4' },
 ]
-const PAYER_COLORS = ['#5C3FEE', '#15B8A6', '#F59E0B', '#C4C4C4']
 
 const activityItems = [
   { dot: '#15B8A6', text: 'CASE-0945 approved by Clinical Reviewer' },
@@ -54,7 +53,7 @@ const card: React.CSSProperties = {
 
 /* ── Sub-components ───────────────────────────────── */
 
-function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
+function StatCard({ label, value, color }: { label: string; value: string; color: string }): React.JSX.Element {
   return (
     <div style={card}>
       <p style={{ fontSize: '13px', color: '#757C8D', margin: '0 0 10px', fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -67,18 +66,17 @@ function StatCard({ label, value, color }: { label: string; value: string; color
   )
 }
 
-function renderLegend(props: { payload?: { color: string; value: string }[] }) {
-  const { payload = [] } = props
+function PayerLegend(): React.JSX.Element {
   return (
     <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0 }}>
-      {payload.map((entry, i) => (
-        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+      {payerData.map((entry) => (
+        <li key={entry.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
           <span style={{
             display: 'inline-block', width: '10px', height: '10px',
             borderRadius: '2px', backgroundColor: entry.color, flexShrink: 0,
           }} />
           <span style={{ fontSize: '13px', color: '#262A33', fontFamily: "'Space Grotesk', sans-serif" }}>
-            {entry.value}
+            {entry.name}
           </span>
         </li>
       ))}
@@ -86,20 +84,14 @@ function renderLegend(props: { payload?: { color: string; value: string }[] }) {
   )
 }
 
-
 /* ── Page ─────────────────────────────────────────── */
 
-export default function DashboardPage() {
+export default function DashboardPage(): React.JSX.Element {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#FFFFFF', fontFamily: "'Space Grotesk', sans-serif" }}>
 
-      {/* Header — matches User Management style */}
-      <div style={{
-        padding: '20px 32px',
-        backgroundColor: '#FFFFFF',
-        borderBottom: '1px solid #ECECEC',
-        flexShrink: 0,
-      }}>
+      {/* Header */}
+      <div style={{ padding: '20px 32px', backgroundColor: '#FFFFFF', borderBottom: '1px solid #ECECEC', flexShrink: 0 }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#262A33', margin: 0, fontFamily: "'Space Grotesk', sans-serif" }}>
           Dashboard
         </h1>
@@ -116,12 +108,10 @@ export default function DashboardPage() {
         {/* Charts row */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '16px', marginBottom: '20px' }}>
 
-          {/* Bar chart card */}
+          {/* Bar chart */}
           <div style={card}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-              <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: 0 }}>
-                Cases by Workflow Stage
-              </p>
+              <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: 0 }}>Cases by Workflow Stage</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#5C3FEE', display: 'inline-block' }} />
                 <span style={{ fontSize: '12px', color: '#757C8D' }}>Cases</span>
@@ -129,41 +119,21 @@ export default function DashboardPage() {
             </div>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={workflowData} barCategoryGap="38%">
-                <XAxis
-                  dataKey="stage"
-                  tick={{ fontSize: 12, fill: '#757C8D', fontFamily: 'Space Grotesk, sans-serif' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
+                <XAxis dataKey="stage" tick={{ fontSize: 12, fill: '#757C8D', fontFamily: 'Space Grotesk, sans-serif' }} axisLine={false} tickLine={false} />
                 <YAxis hide />
-                <Tooltip
-                  contentStyle={{ borderRadius: '8px', border: '1px solid #EEEEEC', fontSize: '13px' }}
-                  cursor={{ fill: '#F4F2FF' }}
-                />
+                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #EEEEEC', fontSize: '13px' }} cursor={{ fill: '#F4F2FF' }} />
                 <Bar dataKey="cases" fill="#5C3FEE" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Donut chart card */}
+          {/* Donut chart */}
           <div style={card}>
-            <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: '0 0 4px' }}>
-              Payer Volume Distribution
-            </p>
+            <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: '0 0 4px' }}>Payer Volume Distribution</p>
             <ResponsiveContainer width="100%" height={190}>
               <PieChart>
-                <Pie
-                  data={payerData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={88}
-                  dataKey="value"
-                  startAngle={90}
-                  endAngle={-270}
-                  strokeWidth={0}
-                >
-                  {payerData.map((_, i) => <Cell key={i} fill={PAYER_COLORS[i]} />)}
+                <Pie data={payerData} cx="50%" cy="50%" innerRadius={60} outerRadius={88} dataKey="value" startAngle={90} endAngle={-270} strokeWidth={0}>
+                  {payerData.map((entry) => <Cell key={entry.name} fill={entry.color} />)}
                 </Pie>
                 <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle">
                   <tspan fontSize="20" fontWeight="700" fill="#262A33" fontFamily="Space Grotesk, sans-serif">100%</tspan>
@@ -173,7 +143,7 @@ export default function DashboardPage() {
                 </text>
               </PieChart>
             </ResponsiveContainer>
-            {renderLegend({ payload: payerData.map((d, i) => ({ value: d.name, color: PAYER_COLORS[i] })) })}
+            <PayerLegend />
           </div>
         </div>
 
@@ -182,9 +152,7 @@ export default function DashboardPage() {
 
           {/* Recent Activity */}
           <div style={card}>
-            <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: '0 0 16px' }}>
-              Recent System Activity
-            </p>
+            <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: '0 0 16px' }}>Recent System Activity</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {activityItems.map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -197,35 +165,22 @@ export default function DashboardPage() {
 
           {/* Team Performance */}
           <div style={card}>
-            <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: '0 0 12px' }}>
-              Team Performance
-            </p>
+            <p style={{ fontSize: '15px', fontWeight: 600, color: '#262A33', margin: '0 0 12px' }}>Team Performance</p>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   {['', 'Specialist', 'Cases', 'Efficiency Score'].map(h => (
-                    <th key={h} style={{
-                      textAlign: 'left', padding: '8px 10px', fontSize: '12px',
-                      color: '#757C8D', fontWeight: 400, borderBottom: '1px solid #EEEEEC',
-                    }}>{h}</th>
+                    <th key={h} style={{ textAlign: 'left', padding: '8px 10px', fontSize: '12px', color: '#757C8D', fontWeight: 400, borderBottom: '1px solid #EEEEEC' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {teamData.map(row => (
                   <tr key={row.rank}>
-                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#757C8D', borderBottom: '1px solid #F5F5F5', width: '32px' }}>
-                      {row.rank}
-                    </td>
-                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#262A33', fontWeight: 600, borderBottom: '1px solid #F5F5F5' }}>
-                      {row.name}
-                    </td>
-                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#262A33', borderBottom: '1px solid #F5F5F5' }}>
-                      {row.cases}
-                    </td>
-                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#5C3FEE', fontWeight: 600, borderBottom: '1px solid #F5F5F5' }}>
-                      {row.score}
-                    </td>
+                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#757C8D', borderBottom: '1px solid #F5F5F5', width: '32px' }}>{row.rank}</td>
+                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#262A33', fontWeight: 600, borderBottom: '1px solid #F5F5F5' }}>{row.name}</td>
+                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#262A33', borderBottom: '1px solid #F5F5F5' }}>{row.cases}</td>
+                    <td style={{ padding: '12px 10px', fontSize: '13px', color: '#5C3FEE', fontWeight: 600, borderBottom: '1px solid #F5F5F5' }}>{row.score}</td>
                   </tr>
                 ))}
               </tbody>
