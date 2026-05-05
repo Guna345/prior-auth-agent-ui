@@ -1,6 +1,6 @@
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  PieChart, Pie, Cell,
 } from 'recharts'
 
 /* ── Data ─────────────────────────────────────────── */
@@ -67,7 +67,7 @@ function StatCard({ label, value, color }: { label: string; value: string; color
   )
 }
 
-const renderLegend = (props: { payload?: { color: string; value: string }[] }) => {
+function renderLegend(props: { payload?: { color: string; value: string }[] }) {
   const { payload = [] } = props
   return (
     <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0 }}>
@@ -85,6 +85,7 @@ const renderLegend = (props: { payload?: { color: string; value: string }[] }) =
     </ul>
   )
 }
+
 
 /* ── Page ─────────────────────────────────────────── */
 
@@ -172,10 +173,7 @@ export default function DashboardPage() {
                 </text>
               </PieChart>
             </ResponsiveContainer>
-            <Legend
-              payload={payerData.map((d, i) => ({ value: d.name, color: PAYER_COLORS[i] }))}
-              content={renderLegend as React.ComponentType<unknown>}
-            />
+            {renderLegend({ payload: payerData.map((d, i) => ({ value: d.name, color: PAYER_COLORS[i] })) })}
           </div>
         </div>
 
