@@ -36,16 +36,22 @@ export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile, 
   if (displayName) {
     return (
       <div style={{
-        border: `1.5px dashed ${PURPLE}`, borderRadius: '12px',
-        padding: '20px 24px', backgroundColor: '#FAFAFE',
+        border: `1.5px dashed ${PURPLE}`, borderRadius: '14px',
+        padding: '18px 20px', backgroundColor: '#FFFFFF',
         display: 'flex', alignItems: 'center', gap: '12px',
       }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#169D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="9 12 11 14 15 10"/>
-        </svg>
+        {/* Filled green circle with white tick */}
+        <div style={{
+          width: '28px', height: '28px', borderRadius: '50%',
+          backgroundColor: '#169D2A', flexShrink: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
         <div>
-          <p style={{ margin: 0, fontSize: '14px', fontWeight: 500, color: '#262A33', fontFamily: "'Space Grotesk', sans-serif" }}>
+          <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#262A33', fontFamily: "'Space Grotesk', sans-serif" }}>
             {displayName}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#169D2A', fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -55,7 +61,7 @@ export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile, 
         <button
           onClick={() => inputRef.current?.click()}
           style={{
-            marginLeft: 'auto', padding: '6px 14px', fontSize: '13px',
+            marginLeft: 'auto', padding: '7px 18px', fontSize: '13px', fontWeight: 500,
             color: PURPLE, backgroundColor: 'transparent',
             border: `1px solid ${PURPLE}`, borderRadius: '8px',
             cursor: 'pointer', fontFamily: "'Space Grotesk', sans-serif",
