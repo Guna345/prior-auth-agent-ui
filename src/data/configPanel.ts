@@ -9,6 +9,9 @@ export interface Rule {
 }
 export interface Payer {
   payerName: string; connectionType: string; status: PayerStatus; lastSync: string
+  connectionUrl?: string
+  connectionFileName?: string
+  connectionNotes?: string
 }
 export interface DataSource {
   sourceName: string; category: string; status: 'Active'; dataFreshness: string
@@ -32,18 +35,18 @@ export const rules: Rule[] = [
 ]
 
 export const payers: Payer[] = [
-  { payerName: 'UnitedHealthcare', connectionType: 'File Upload',            status: 'Connected',    lastSync: '02/04/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Feature Deployment',     status: 'Pending',      lastSync: '02/15/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Data Migration',         status: 'Connected',    lastSync: '02/20/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'API Integration',        status: 'Connected',    lastSync: '02/25/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'User Acceptance Testing',status: 'Connected',    lastSync: '03/01/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Security Audit',         status: 'Connected',    lastSync: '03/05/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Performance Optimization',status:'Connected',    lastSync: '03/10/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Documentation Update',   status: 'Connected',    lastSync: '03/15/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Training Session',       status: 'Connected',    lastSync: '03/20/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Go-Live Preparation',    status: 'Connected',    lastSync: '03/25/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Final Deployment',       status: 'Connected',    lastSync: '03/30/2026' },
-  { payerName: 'UnitedHealthcare', connectionType: 'Post-Deployment Review', status: 'Connected',    lastSync: '04/05/2026' },
+  { payerName: 'UnitedHealthcare', connectionType: 'File Upload',             status: 'Connected',  lastSync: '02/04/2026', connectionFileName: 'UHC_claims_data.csv'                        },
+  { payerName: 'UnitedHealthcare', connectionType: 'Feature Deployment',      status: 'Pending',    lastSync: '02/15/2026', connectionNotes:    'v2.3.1 — Q2 rollout scheduled'              },
+  { payerName: 'UnitedHealthcare', connectionType: 'Data Migration',          status: 'Connected',  lastSync: '02/20/2026', connectionUrl:      'server=uhc-prod;database=claims_2026'       },
+  { payerName: 'UnitedHealthcare', connectionType: 'API Integration',         status: 'Connected',  lastSync: '02/25/2026', connectionUrl:      'api.uhc.com/v2/prior-auth'                  },
+  { payerName: 'UnitedHealthcare', connectionType: 'User Acceptance Testing', status: 'Connected',  lastSync: '03/01/2026', connectionNotes:    'UAT Phase 3 — coordinator: J. Smith'        },
+  { payerName: 'UnitedHealthcare', connectionType: 'Security Audit',          status: 'Connected',  lastSync: '03/05/2026', connectionNotes:    'SOC 2 Type II audit — ref: SA-2026-041'     },
+  { payerName: 'UnitedHealthcare', connectionType: 'Performance Optimization',status: 'Connected',  lastSync: '03/10/2026', connectionNotes:    'Target: <200ms p95 response time'           },
+  { payerName: 'UnitedHealthcare', connectionType: 'Documentation Update',    status: 'Connected',  lastSync: '03/15/2026', connectionFileName: 'UHC_integration_guide_v4.pdf'              },
+  { payerName: 'UnitedHealthcare', connectionType: 'Training Session',        status: 'Connected',  lastSync: '03/20/2026', connectionNotes:    'Onboarding session — 45 participants'       },
+  { payerName: 'UnitedHealthcare', connectionType: 'Go-Live Preparation',     status: 'Connected',  lastSync: '03/25/2026', connectionNotes:    'Go-live checklist — final review pending'   },
+  { payerName: 'UnitedHealthcare', connectionType: 'Final Deployment',        status: 'Connected',  lastSync: '03/30/2026', connectionNotes:    'v3.0.0 — production deployment complete'    },
+  { payerName: 'UnitedHealthcare', connectionType: 'Post-Deployment Review',  status: 'Connected',  lastSync: '04/05/2026', connectionNotes:    'All KPIs within acceptable range'           },
 ]
 
 export const dataSources: DataSource[] = [

@@ -40,6 +40,7 @@ function AutoSaveIndicator(): React.JSX.Element {
 export default function ConfigurationPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<ConfigTab>('Rules')
   const [rulesAddOpen, setRulesAddOpen] = useState(false)
+  const [payerAddOpen, setPayerAddOpen] = useState(false)
   const [dsAddOpen, setDsAddOpen] = useState(false)
 
   function renderAction(): React.ReactNode {
@@ -47,7 +48,7 @@ export default function ConfigurationPage(): React.JSX.Element {
       return <HeaderBtn label="+ Add Rule" onClick={() => setRulesAddOpen(true)} />
     }
     if (activeTab === 'Payer' || activeTab === 'Form Management') {
-      return <HeaderBtn label="+ Add Payer" />
+      return <HeaderBtn label="+ Add Payer" onClick={() => setPayerAddOpen(true)} />
     }
     if (activeTab === 'Data Source') {
       return <HeaderBtn label="+ Add Data Source" onClick={() => setDsAddOpen(true)} />
@@ -81,7 +82,12 @@ export default function ConfigurationPage(): React.JSX.Element {
             onAddClose={() => setRulesAddOpen(false)}
           />
         )}
-        {activeTab === 'Payer'           && <PayerTab />}
+        {activeTab === 'Payer' && (
+          <PayerTab
+            addOpen={payerAddOpen}
+            onAddClose={() => setPayerAddOpen(false)}
+          />
+        )}
         {activeTab === 'Data Source'     && (
           <DataSourceTab
             addOpen={dsAddOpen}
