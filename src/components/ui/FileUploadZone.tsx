@@ -4,11 +4,12 @@ interface FileUploadZoneProps {
   onFile?: (file: File) => void
   accept?: string
   uploadedFile?: File | null
+  uploadedFileName?: string   // pre-saved filename (no File object needed)
 }
 
 const PURPLE = '#5C3FEE'
 
-export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile }: FileUploadZoneProps): React.JSX.Element {
+export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile, uploadedFileName }: FileUploadZoneProps): React.JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
@@ -29,7 +30,10 @@ export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile }
     e.target.value = ''
   }
 
-  if (uploadedFile) {
+  // Show uploaded state if we have an actual File OR a saved filename string
+  const displayName = uploadedFile?.name ?? uploadedFileName ?? ''
+
+  if (displayName) {
     return (
       <div style={{
         border: `1.5px dashed ${PURPLE}`, borderRadius: '12px',
@@ -42,7 +46,7 @@ export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile }
         </svg>
         <div>
           <p style={{ margin: 0, fontSize: '14px', fontWeight: 500, color: '#262A33', fontFamily: "'Space Grotesk', sans-serif" }}>
-            {uploadedFile.name}
+            {displayName}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#169D2A', fontFamily: "'Space Grotesk', sans-serif" }}>
             Uploaded
@@ -77,7 +81,6 @@ export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile }
         gap: '8px', transition: 'background 0.15s',
       }}
     >
-      {/* Upload icon */}
       <div style={{
         width: '52px', height: '52px', borderRadius: '12px',
         backgroundColor: '#EDE9FF', display: 'flex', alignItems: 'center', justifyContent: 'center',

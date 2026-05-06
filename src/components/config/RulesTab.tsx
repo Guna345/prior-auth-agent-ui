@@ -45,7 +45,15 @@ export default function RulesTab({ addOpen = false, onAddClose }: RulesTabProps)
   function handleSave(vals: RuleFormData) {
     if (editIdx !== null) {
       setData(d => d.map((row, i) => i === editIdx
-        ? { ...row, cpt: vals.cpt, payer: vals.payer, description: vals.description, source: vals.source, sourceUrl: vals.sourceUrl }
+        ? {
+            ...row,
+            cpt: vals.cpt,
+            payer: vals.payer,
+            description: vals.description,
+            source: vals.source,
+            sourceUrl: vals.sourceUrl,
+            sourceFileName: vals.sourceFileName,
+          }
         : row
       ))
       setEditIdx(null)
@@ -58,6 +66,7 @@ export default function RulesTab({ addOpen = false, onAddClose }: RulesTabProps)
         description: vals.description,
         source: vals.source,
         sourceUrl: vals.sourceUrl,
+        sourceFileName: vals.sourceFileName,
         status: 'Active',
       }])
       onAddClose?.()
@@ -115,6 +124,7 @@ export default function RulesTab({ addOpen = false, onAddClose }: RulesTabProps)
             description: data[editIdx]?.description,
             source: data[editIdx]?.source,
             sourceUrl: data[editIdx]?.sourceUrl,
+            sourceFileName: data[editIdx]?.sourceFileName,
           }}
         />
       )}

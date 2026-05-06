@@ -19,6 +19,7 @@ export interface RuleFormData {
   description: string
   source: 'DB' | 'Excel'
   sourceUrl: string
+  sourceFileName: string   // persisted filename for Excel rules
   file: File | null
 }
 
@@ -26,7 +27,7 @@ interface RuleModalProps {
   mode: 'add' | 'edit'
   onClose: () => void
   onSave: (data: RuleFormData) => void
-  initial?: Partial<Pick<Rule, 'cpt' | 'payer' | 'description' | 'source' | 'sourceUrl'>>
+  initial?: Partial<Pick<Rule, 'cpt' | 'payer' | 'description' | 'source' | 'sourceUrl' | 'sourceFileName'>>
 }
 
 function RadioOption({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }): React.JSX.Element {
@@ -42,14 +43,9 @@ function RadioOption({ label, checked, onChange }: { label: string; checked: boo
           cursor: 'pointer',
         }}
       >
-        {checked && (
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: PURPLE }} />
-        )}
+        {checked && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: PURPLE }} />}
       </div>
-      <span
-        onClick={onChange}
-        style={{ fontSize: '14px', color: '#262A33', fontFamily: "'Space Grotesk', sans-serif" }}
-      >
+      <span onClick={onChange} style={{ fontSize: '14px', color: '#262A33', fontFamily: "'Space Grotesk', sans-serif" }}>
         {label}
       </span>
     </label>
@@ -62,18 +58,26 @@ export default function RuleModal({ mode, onClose, onSave, initial = {} }: RuleM
   const [description, setDescription] = useState(initial.description ?? '')
   const [source, setSource] = useState<'DB' | 'Excel'>(initial.source ?? 'DB')
   const [sourceUrl, setSourceUrl] = useState(initial.sourceUrl ?? '')
+
+  // fileName is seeded from saved data — lets edit show the previously uploaded filename
   const [file, setFile] = useState<File | null>(null)
+  const [fileName, setFileName] = useState(initial.sourceFileName ?? '')
+
+  function handleFile(f: File) {
+    setFile(f)
+    setFileName(f.name)
+  }
 
   function handleSave() {
     if (!cpt || !payer || !description) return
     if (source === 'DB' && !sourceUrl) return
-    if (source === 'Excel' && !file && mode === 'add') return
-    onSave({ cpt, payer, description, source, sourceUrl, file })
+    if (source === 'Excel' && !fileName) return
+    onSave({ cpt, payer, description, source, sourceUrl, sourceFileName: fileName, file })
   }
 
   const canSave = Boolean(
     cpt && payer && description &&
-    (source === 'DB' ? sourceUrl : (file || mode === 'edit'))
+    (source === 'DB' ? sourceUrl : fileName)
   )
 
   const isEdit = mode === 'edit'
@@ -155,7 +159,7 @@ export default function RuleModal({ mode, onClose, onSave, initial = {} }: RuleM
         </div>
       </div>
 
-      {/* Conditional: DB URL or file upload */}
+      {/* DB: pre-filled URL input */}
       {source === 'DB' && (
         <FormField
           label=""
@@ -165,11 +169,13 @@ export default function RuleModal({ mode, onClose, onSave, initial = {} }: RuleM
         />
       )}
 
+      {/* Excel: show uploaded state if fileName already set (edit), else show upload zone */}
       {source === 'Excel' && (
         <FileUploadZone
           accept=".csv,.xlsx"
           uploadedFile={file}
-          onFile={setFile}
+          uploadedFileName={fileName}
+          onFile={handleFile}
         />
       )}
     </Modal>
