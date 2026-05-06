@@ -1,44 +1,44 @@
 import { useState } from 'react'
 import Modal from '../ui/Modal'
 import FormField from '../ui/FormField'
-import FormTextArea from '../ui/FormTextArea'
 import SelectDropdown from '../ui/SelectDropdown'
 
-const DATA_SOURCE_OPTIONS = [
-  'File Upload', 'Data Bases', 'API Integration',
-  'EHR (FHIR R4)', 'HL7 V2', 'DICOM', 'LIS', 'CCD', 'OMOP CDM',
-]
+const CATEGORY_OPTIONS = ['Clinical', 'Imaging', 'Laboratory', 'Research']
+const FRESHNESS_OPTIONS = ['Real - Time', 'Batch', 'Near - Real - Time']
+
+const PURPLE = '#5C3FEE'
+
+export interface DataSourceFormData {
+  sourceName: string
+  category: string
+  dataFreshness: string
+}
 
 interface DataSourceModalProps {
   mode: 'add' | 'edit'
   onClose: () => void
-  onSave: (data: { versionName: string; description: string; source: string; connectionUrl: string }) => void
-  initial?: { versionName?: string; description?: string; source?: string; connectionUrl?: string }
+  onSave: (data: DataSourceFormData) => void
+  initial?: Partial<DataSourceFormData>
 }
 
-const PURPLE = '#5C3FEE'
-
 export default function DataSourceModal({ mode, onClose, onSave, initial = {} }: DataSourceModalProps): React.JSX.Element {
-  const [versionName, setVersionName] = useState(initial.versionName ?? '')
-  const [description, setDescription] = useState(initial.description ?? '')
-  const [source, setSource] = useState(initial.source ?? '')
-  const [connectionUrl, setConnectionUrl] = useState(initial.connectionUrl ?? '')
+  const [sourceName, setSourceName] = useState(initial.sourceName ?? '')
+  const [category, setCategory] = useState(initial.category ?? '')
+  const [dataFreshness, setDataFreshness] = useState(initial.dataFreshness ?? '')
 
   function handleSave() {
-    if (!versionName || !description || !source) return
-    onSave({ versionName, description, source, connectionUrl })
+    if (!sourceName || !category || !dataFreshness) return
+    onSave({ sourceName, category, dataFreshness })
   }
 
-  const canSave = Boolean(versionName && description && source)
-
+  const canSave = Boolean(sourceName && category && dataFreshness)
   const title = mode === 'edit' ? 'Edit Data Source' : 'Add Data Source'
-  const subtitle = 'Select source and configure logic for this rule version.'
 
   return (
     <Modal
       title={title}
-      subtitle={subtitle}
       onClose={onClose}
+      maxWidth="740px"
       footer={
         <div style={{
           display: 'flex', justifyContent: 'flex-end', gap: '12px',
@@ -47,7 +47,7 @@ export default function DataSourceModal({ mode, onClose, onSave, initial = {} }:
           <button
             onClick={onClose}
             style={{
-              padding: '10px 28px', fontSize: '14px', fontWeight: 700,
+              padding: '10px 40px', fontSize: '14px', fontWeight: 700,
               color: PURPLE, backgroundColor: 'transparent',
               border: `1px solid ${PURPLE}`, borderRadius: '10px',
               cursor: 'pointer', fontFamily: "'Space Grotesk', sans-serif",
@@ -59,7 +59,7 @@ export default function DataSourceModal({ mode, onClose, onSave, initial = {} }:
             onClick={handleSave}
             disabled={!canSave}
             style={{
-              padding: '10px 28px', fontSize: '14px', fontWeight: 700,
+              padding: '10px 40px', fontSize: '14px', fontWeight: 700,
               color: '#FFFFFF',
               backgroundColor: canSave ? PURPLE : '#B8ACEF',
               border: 'none', borderRadius: '10px',
@@ -73,33 +73,27 @@ export default function DataSourceModal({ mode, onClose, onSave, initial = {} }:
       }
     >
       <FormField
-        label="Version Name"
+        label="Source Name"
         required
-        value={versionName}
-        onChange={setVersionName}
+        value={sourceName}
+        onChange={setSourceName}
         placeholder="Name"
       />
-      <FormTextArea
-        label="Description"
-        required
-        value={description}
-        onChange={setDescription}
-        placeholder="ACME INC"
-        rows={4}
-      />
       <SelectDropdown
-        label="Choose Data Source"
+        label="Category"
         required
-        value={source}
-        onChange={setSource}
-        options={DATA_SOURCE_OPTIONS}
+        value={category}
+        onChange={setCategory}
+        options={CATEGORY_OPTIONS}
         placeholder="Select"
       />
-      <FormField
-        label="Connection String / URL"
-        value={connectionUrl}
-        onChange={setConnectionUrl}
-        placeholder="Enter"
+      <SelectDropdown
+        label="Data Freshness"
+        required
+        value={dataFreshness}
+        onChange={setDataFreshness}
+        options={FRESHNESS_OPTIONS}
+        placeholder="Select"
       />
     </Modal>
   )

@@ -7,9 +7,10 @@ interface ModalProps {
   children: ReactNode
   footer: ReactNode
   wide?: boolean
+  maxWidth?: string
 }
 
-export default function Modal({ title, subtitle, onClose, children, footer, wide }: ModalProps) {
+export default function Modal({ title, subtitle, onClose, children, footer, wide, maxWidth }: ModalProps) {
   return (
     <div style={{
       position: 'fixed',
@@ -24,7 +25,7 @@ export default function Modal({ title, subtitle, onClose, children, footer, wide
         backgroundColor: '#FFFFFF',
         borderRadius: '12px',
         width: '100%',
-        maxWidth: wide ? '1120px' : '480px',
+        maxWidth: maxWidth ?? (wide ? '1120px' : '480px'),
         margin: '0 16px',
         maxHeight: '90vh',
         display: 'flex',

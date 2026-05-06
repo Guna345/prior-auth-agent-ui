@@ -3,6 +3,7 @@ import { dataSources } from '../../data/configPanel'
 import type { DataSource } from '../../data/configPanel'
 import ConfigActionBtn from './ConfigActionBtn'
 import DataSourceModal from './DataSourceModal'
+import type { DataSourceFormData } from './DataSourceModal'
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -24,19 +25,19 @@ export default function DataSourceTab({ addOpen = false, onAddClose }: DataSourc
   const [data, setData] = useState<DataSource[]>(dataSources)
   const [editIdx, setEditIdx] = useState<number | null>(null)
 
-  function handleSave(vals: { versionName: string; description: string; source: string; connectionUrl: string }) {
+  function handleSave(vals: DataSourceFormData) {
     if (editIdx !== null) {
       setData(d => d.map((row, i) => i === editIdx
-        ? { ...row, sourceName: vals.versionName, category: vals.source as DataSource['category'] }
+        ? { ...row, sourceName: vals.sourceName, category: vals.category as DataSource['category'], dataFreshness: vals.dataFreshness }
         : row
       ))
       setEditIdx(null)
     } else {
       setData(d => [...d, {
-        sourceName: vals.versionName,
-        category: 'Clinical',
+        sourceName: vals.sourceName,
+        category: vals.category as DataSource['category'],
         status: 'Active',
-        dataFreshness: 'Real - Time',
+        dataFreshness: vals.dataFreshness,
       }])
       onAddClose?.()
     }
@@ -92,7 +93,11 @@ export default function DataSourceTab({ addOpen = false, onAddClose }: DataSourc
           mode="edit"
           onClose={() => setEditIdx(null)}
           onSave={handleSave}
-          initial={{ versionName: data[editIdx]?.sourceName, source: data[editIdx]?.category }}
+          initial={{
+            sourceName: data[editIdx]?.sourceName,
+            category: data[editIdx]?.category,
+            dataFreshness: data[editIdx]?.dataFreshness,
+          }}
         />
       )}
 
