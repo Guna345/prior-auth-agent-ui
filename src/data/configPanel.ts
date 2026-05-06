@@ -4,6 +4,7 @@ export type PayerStatus = 'Connected' | 'Pending' | 'Disconnected'
 export interface Rule {
   ruleId: string; cpt: string; payer: string
   description: string; source: 'DB' | 'Excel'; status: RuleStatus
+  sourceUrl?: string
 }
 export interface Payer {
   payerName: string; connectionType: string; status: PayerStatus; lastSync: string
