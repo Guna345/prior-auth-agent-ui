@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { dataSources } from '../../data/configPanel'
+import type { DataSource } from '../../data/configPanel'
 import ConfigActionBtn from './ConfigActionBtn'
+import DataSourceModal from './DataSourceModal'
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -13,50 +15,94 @@ const tdStyle: React.CSSProperties = {
   borderBottom: '1px solid #ECECEC', fontFamily: "'Space Grotesk', sans-serif",
 }
 
-export default function DataSourceTab(): React.JSX.Element {
-  const [data, setData] = useState(dataSources)
+interface DataSourceTabProps {
+  addOpen?: boolean
+  onAddClose?: () => void
+}
+
+export default function DataSourceTab({ addOpen = false, onAddClose }: DataSourceTabProps): React.JSX.Element {
+  const [data, setData] = useState<DataSource[]>(dataSources)
+  const [editIdx, setEditIdx] = useState<number | null>(null)
+
+  function handleSave(vals: { versionName: string; description: string; source: string; connectionUrl: string }) {
+    if (editIdx !== null) {
+      setData(d => d.map((row, i) => i === editIdx
+        ? { ...row, sourceName: vals.versionName, category: vals.source as DataSource['category'] }
+        : row
+      ))
+      setEditIdx(null)
+    } else {
+      setData(d => [...d, {
+        sourceName: vals.versionName,
+        category: 'Clinical',
+        status: 'Active',
+        dataFreshness: 'Real - Time',
+      }])
+      onAddClose?.()
+    }
+  }
+
   return (
-    <div style={{ border: '1px solid #ECECEC', borderRadius: '10px', overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={thStyle}>Source Name</th>
-            <th style={thStyle}>Category</th>
-            <th style={thStyle}>Status</th>
-            <th style={thStyle}>Data Freshness</th>
-            <th style={thStyle}>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, i) => (
-            <tr key={i}
-              style={{ backgroundColor: '#FFFFFF' }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F9F9FF')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
-            >
-              <td style={tdStyle}>{row.sourceName}</td>
-              <td style={{ ...tdStyle, color: '#757C8D' }}>{row.category}</td>
-              <td style={tdStyle}>
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', padding: '3px 12px',
-                  borderRadius: '5px', fontSize: '13px',
-                  backgroundColor: '#E8F5E9', color: '#169D2A',
-                  fontFamily: "'Space Grotesk', sans-serif",
-                }}>
-                  {row.status}
-                </span>
-              </td>
-              <td style={{ ...tdStyle, color: '#757C8D' }}>{row.dataFreshness}</td>
-              <td style={tdStyle}>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <ConfigActionBtn icon="edit" onClick={() => {}} />
-                  <ConfigActionBtn icon="delete" danger onClick={() => setData(d => d.filter((_, idx) => idx !== i))} />
-                </div>
-              </td>
+    <>
+      <div style={{ border: '1px solid #ECECEC', borderRadius: '10px', overflow: 'hidden' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={thStyle}>Source Name</th>
+              <th style={thStyle}>Category</th>
+              <th style={thStyle}>Status</th>
+              <th style={thStyle}>Data Freshness</th>
+              <th style={thStyle}>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {data.map((row, i) => (
+              <tr key={i}
+                style={{ backgroundColor: '#FFFFFF' }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F9F9FF')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+              >
+                <td style={tdStyle}>{row.sourceName}</td>
+                <td style={{ ...tdStyle, color: '#757C8D' }}>{row.category}</td>
+                <td style={tdStyle}>
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', padding: '3px 12px',
+                    borderRadius: '5px', fontSize: '13px',
+                    backgroundColor: '#E8F5E9', color: '#169D2A',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                  }}>
+                    {row.status}
+                  </span>
+                </td>
+                <td style={{ ...tdStyle, color: '#757C8D' }}>{row.dataFreshness}</td>
+                <td style={tdStyle}>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <ConfigActionBtn icon="edit" onClick={() => setEditIdx(i)} />
+                    <ConfigActionBtn icon="delete" danger onClick={() => setData(d => d.filter((_, idx) => idx !== i))} />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {editIdx !== null && (
+        <DataSourceModal
+          mode="edit"
+          onClose={() => setEditIdx(null)}
+          onSave={handleSave}
+          initial={{ versionName: data[editIdx]?.sourceName, source: data[editIdx]?.category }}
+        />
+      )}
+
+      {addOpen && (
+        <DataSourceModal
+          mode="add"
+          onClose={() => onAddClose?.()}
+          onSave={handleSave}
+        />
+      )}
+    </>
   )
 }

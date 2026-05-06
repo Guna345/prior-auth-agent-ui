@@ -29,9 +29,7 @@ function HeaderBtn({ label, onClick, outlined }: { label: string; onClick?: () =
 function AutoSaveIndicator(): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-      <span style={{
-        width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#169D2A', display: 'inline-block',
-      }} />
+      <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#169D2A', display: 'inline-block' }} />
       <span style={{ fontSize: '13px', color: '#169D2A', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 500 }}>
         Auto Saved
       </span>
@@ -39,33 +37,33 @@ function AutoSaveIndicator(): React.JSX.Element {
   )
 }
 
-function TabActions({ tab }: { tab: ConfigTab }): React.JSX.Element | null {
-  if (tab === 'Rules') {
-    return (
-      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        <HeaderBtn label="Upload Rules" outlined />
-        <HeaderBtn label="+ Add Rule" />
-      </div>
-    )
-  }
-  if (tab === 'Payer' || tab === 'Form Management') {
-    return <HeaderBtn label="+ Add Payer" />
-  }
-  if (tab === 'Data Source') {
-    return <HeaderBtn label="+ Add Data Source" />
-  }
-  if (tab === 'Risk Score') {
-    return <AutoSaveIndicator />
-  }
-  return null
-}
-
 export default function ConfigurationPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<ConfigTab>('Rules')
+  const [dsAddOpen, setDsAddOpen] = useState(false)
+
+  function renderAction(): React.ReactNode {
+    if (activeTab === 'Rules') {
+      return (
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <HeaderBtn label="Upload Rules" outlined />
+          <HeaderBtn label="+ Add Rule" />
+        </div>
+      )
+    }
+    if (activeTab === 'Payer' || activeTab === 'Form Management') {
+      return <HeaderBtn label="+ Add Payer" />
+    }
+    if (activeTab === 'Data Source') {
+      return <HeaderBtn label="+ Add Data Source" onClick={() => setDsAddOpen(true)} />
+    }
+    if (activeTab === 'Risk Score') {
+      return <AutoSaveIndicator />
+    }
+    return null
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#FFFFFF' }}>
-      {/* Page header */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '20px 28px', borderBottom: '1px solid #ECECEC', flexShrink: 0,
@@ -78,17 +76,17 @@ export default function ConfigurationPage(): React.JSX.Element {
         </h1>
       </div>
 
-      {/* Content */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px' }}>
-        <TabBar
-          active={activeTab}
-          onChange={setActiveTab}
-          action={<TabActions tab={activeTab} />}
-        />
+        <TabBar active={activeTab} onChange={setActiveTab} action={renderAction()} />
 
         {activeTab === 'Rules'           && <RulesTab />}
         {activeTab === 'Payer'           && <PayerTab />}
-        {activeTab === 'Data Source'     && <DataSourceTab />}
+        {activeTab === 'Data Source'     && (
+          <DataSourceTab
+            addOpen={dsAddOpen}
+            onAddClose={() => setDsAddOpen(false)}
+          />
+        )}
         {activeTab === 'Risk Score'      && <RiskScoreTab />}
         {activeTab === 'Form Management' && <FormManagementTab />}
       </div>

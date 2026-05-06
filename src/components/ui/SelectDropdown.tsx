@@ -63,10 +63,11 @@ export default function SelectDropdown({
           justifyContent: 'space-between',
           padding: '11px 14px',
           backgroundColor: '#F7F5FF',
-          border: '1px solid #E3E5E8',
+          border: `1px solid ${open ? '#5C3FEE' : '#E3E5E8'}`,
           borderRadius: '10px',
           cursor: 'pointer',
           userSelect: 'none',
+          transition: 'border-color 0.15s',
         }}
       >
         <span style={{

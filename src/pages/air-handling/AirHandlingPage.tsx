@@ -48,6 +48,7 @@ function StatusBadge({ status }: { status: CaseStatus }) {
 export default function AirHandlingPage() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
   const [statusFilter, setStatusFilter] = useState<'All' | CaseStatus>('All')
   const [filterOpen, setFilterOpen] = useState(false)
 
@@ -84,13 +85,17 @@ export default function AirHandlingPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by Patient Name, ID"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
               style={{
                 width: '100%', boxSizing: 'border-box',
                 padding: '10px 12px 10px 38px',
-                border: '1px solid #E3E5E8', borderRadius: '8px',
+                border: `1px solid ${searchFocused ? '#5C3FEE' : '#E3E5E8'}`,
+                borderRadius: '8px',
                 backgroundColor: '#F7F5FF', fontSize: '14px',
                 color: '#262A33', outline: 'none',
                 fontFamily: "'Space Grotesk', sans-serif",
+                transition: 'border-color 0.15s',
               }}
             />
           </div>

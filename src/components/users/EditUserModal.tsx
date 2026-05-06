@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { User, UserAccess, UserRole } from '../../types/user'
 import Modal from '../ui/Modal'
+import FormField from '../ui/FormField'
 import SelectDropdown from '../ui/SelectDropdown'
 import AccessLevelControl from './AccessLevelControl'
 
@@ -28,29 +29,9 @@ const rightFields: { key: keyof UserAccess; label: string }[] = [
   { key: 'analytics', label: 'Analytics' },
 ]
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: '#F7F5FF',
-  border: '1px solid #E3E5E8',
-  borderRadius: '8px',
-  padding: '11px 12px',
-  fontSize: '14px',
-  color: '#262A33',
-  fontFamily: "'Space Grotesk', sans-serif",
-  outline: 'none',
-  boxSizing: 'border-box',
-}
+const PURPLE = '#5C3FEE'
 
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: '14px',
-  fontWeight: 400,
-  color: '#262A33',
-  marginBottom: '6px',
-  fontFamily: "'Space Grotesk', sans-serif",
-}
-
-export default function EditUserModal({ user, onClose, onUpdate }: EditUserModalProps) {
+export default function EditUserModal({ user, onClose, onUpdate }: EditUserModalProps): React.JSX.Element {
   const [role, setRole] = useState<UserRole>(user.roleAssigned)
   const [username, setUsername] = useState(user.username)
   const [email, setEmail] = useState(user.email)
@@ -71,24 +52,16 @@ export default function EditUserModal({ user, onClose, onUpdate }: EditUserModal
       wide
       footer={
         <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: '12px',
-          paddingTop: '16px',
-          borderTop: '1px solid #ECECEC',
+          display: 'flex', justifyContent: 'flex-end', gap: '12px',
+          paddingTop: '16px', borderTop: '1px solid #ECECEC',
         }}>
           <button
             onClick={onClose}
             style={{
-              padding: '10px 24px',
-              fontSize: '14px',
-              fontWeight: 700,
-              color: '#5C3FEE',
-              backgroundColor: 'transparent',
-              border: '1px solid #5C3FEE',
-              borderRadius: '10px',
-              cursor: 'pointer',
-              fontFamily: "'Space Grotesk', sans-serif",
+              padding: '10px 24px', fontSize: '14px', fontWeight: 700,
+              color: PURPLE, backgroundColor: 'transparent',
+              border: `1px solid ${PURPLE}`, borderRadius: '10px',
+              cursor: 'pointer', fontFamily: "'Space Grotesk', sans-serif",
             }}
           >
             Cancel
@@ -96,14 +69,9 @@ export default function EditUserModal({ user, onClose, onUpdate }: EditUserModal
           <button
             onClick={handleUpdate}
             style={{
-              padding: '10px 24px',
-              fontSize: '14px',
-              fontWeight: 700,
-              color: '#FFFFFF',
-              backgroundColor: '#5C3FEE',
-              border: 'none',
-              borderRadius: '10px',
-              cursor: 'pointer',
+              padding: '10px 24px', fontSize: '14px', fontWeight: 700,
+              color: '#FFFFFF', backgroundColor: PURPLE, border: 'none',
+              borderRadius: '10px', cursor: 'pointer',
               fontFamily: "'Space Grotesk', sans-serif",
             }}
           >
@@ -112,7 +80,6 @@ export default function EditUserModal({ user, onClose, onUpdate }: EditUserModal
         </div>
       }
     >
-      {/* Role */}
       <SelectDropdown
         label="Role"
         value={role}
@@ -121,60 +88,39 @@ export default function EditUserModal({ user, onClose, onUpdate }: EditUserModal
         placeholder="Select"
       />
 
-      {/* Name + Email */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-        <div>
-          <label style={labelStyle}>User Name</label>
-          <input
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            placeholder="Enter the Name"
-            style={inputStyle}
-          />
-        </div>
-        <div>
-          <label style={labelStyle}>User Email</label>
-          <input
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="xyz@gmail.com"
-            style={inputStyle}
-          />
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '4px' }}>
+        <FormField
+          label="User Name"
+          value={username}
+          onChange={setUsername}
+          placeholder="Enter the Name"
+        />
+        <FormField
+          label="User Email"
+          value={email}
+          onChange={setEmail}
+          placeholder="xyz@gmail.com"
+          type="email"
+        />
       </div>
 
-      {/* Access Level Control */}
       <div style={{ borderTop: '1px solid #ECECEC', paddingTop: '16px' }}>
         <p style={{
-          fontSize: '12px',
-          fontWeight: 600,
-          color: '#757C8D',
-          textTransform: 'uppercase',
-          letterSpacing: '1px',
-          margin: '0 0 12px',
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: '12px', fontWeight: 600, color: '#757C8D',
+          textTransform: 'uppercase', letterSpacing: '1px',
+          margin: '0 0 12px', fontFamily: "'Space Grotesk', sans-serif",
         }}>
           Access Level Control
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 48px' }}>
           <div>
             {leftFields.map(({ key, label }) => (
-              <AccessLevelControl
-                key={key}
-                label={label}
-                value={access[key]}
-                onChange={val => setAccessField(key, val)}
-              />
+              <AccessLevelControl key={key} label={label} value={access[key]} onChange={val => setAccessField(key, val)} />
             ))}
           </div>
           <div>
             {rightFields.map(({ key, label }) => (
-              <AccessLevelControl
-                key={key}
-                label={label}
-                value={access[key]}
-                onChange={val => setAccessField(key, val)}
-              />
+              <AccessLevelControl key={key} label={label} value={access[key]} onChange={val => setAccessField(key, val)} />
             ))}
           </div>
         </div>
