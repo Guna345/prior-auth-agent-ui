@@ -7,6 +7,7 @@ import DashboardPage from './pages/dashboard/DashboardPage'
 import AirHandlingPage from './pages/air-handling/AirHandlingPage'
 import CaseDetailPage from './pages/air-handling/CaseDetailPage'
 import UserManagementPage from './pages/users/UserManagementPage'
+import ConfigurationPage from './pages/configuration/ConfigurationPage'
 import AppLayout from './components/layout/AppLayout'
 import './App.css'
 
@@ -56,6 +57,17 @@ export default function App() {
               <ProtectedRoute>
                 <AppLayout>
                   <UserManagementPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/configuration"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ConfigurationPage />
                 </AppLayout>
               </ProtectedRoute>
             }
