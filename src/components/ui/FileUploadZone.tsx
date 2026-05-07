@@ -117,9 +117,9 @@ export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile, 
       <button
         onClick={() => inputRef.current?.click()}
         style={{
-          marginTop: '8px', padding: '8px 24px', fontSize: '14px',
-          color: PURPLE, backgroundColor: 'transparent',
-          border: `1px solid ${PURPLE}`, borderRadius: '8px',
+          marginTop: '8px', padding: '8px 28px', fontSize: '14px', fontWeight: 600,
+          color: '#FFFFFF', backgroundColor: PURPLE,
+          border: 'none', borderRadius: '8px',
           cursor: 'pointer', fontFamily: "'Space Grotesk', sans-serif",
         }}
       >

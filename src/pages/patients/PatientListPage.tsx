@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { patients } from '../../data/patients'
 import type { PatientStatus } from '../../types/patients'
+import UploadPatientModal from '../../components/patients/UploadPatientModal'
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -51,6 +52,7 @@ export default function PatientListPage() {
   const [searchFocused, setSearchFocused] = useState(false)
   const [statusFilter, setStatusFilter] = useState<'All' | PatientStatus>('All')
   const [filterOpen, setFilterOpen] = useState(false)
+  const [uploadOpen, setUploadOpen] = useState(false)
 
   useEffect(() => {
     if (completedCaseId) {
@@ -163,6 +165,7 @@ export default function PatientListPage() {
 
             {/* Upload button */}
             <button
+              onClick={() => setUploadOpen(true)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
                 padding: '9px 18px', fontSize: '14px', fontWeight: 500, cursor: 'pointer',
@@ -231,6 +234,10 @@ export default function PatientListPage() {
           )}
         </div>
       </div>
+
+      {uploadOpen && (
+        <UploadPatientModal onClose={() => setUploadOpen(false)} onUpdate={() => setUploadOpen(false)} />
+      )}
 
       {toastVisible && completedCaseId && (
         <div style={{
