@@ -4,12 +4,13 @@ interface FileUploadZoneProps {
   onFile?: (file: File) => void
   accept?: string
   uploadedFile?: File | null
-  uploadedFileName?: string   // pre-saved filename (no File object needed)
+  uploadedFileName?: string
+  supportText?: string
 }
 
 const PURPLE = '#5C3FEE'
 
-export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile, uploadedFileName }: FileUploadZoneProps): React.JSX.Element {
+export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile, uploadedFileName, supportText = 'CSV' }: FileUploadZoneProps): React.JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
@@ -110,7 +111,7 @@ export default function FileUploadZone({ onFile, accept = '.csv', uploadedFile, 
         {' '}to Upload
       </p>
       <p style={{ margin: 0, fontSize: '12px', color: '#757C8D', fontFamily: "'Space Grotesk', sans-serif" }}>
-        File support format: CSV
+        File support format: {supportText}
       </p>
 
       <button

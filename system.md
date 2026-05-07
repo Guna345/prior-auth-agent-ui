@@ -204,3 +204,66 @@ Fields (in order):
 4. Connection String / URL — single-line `FormField` (optional)
 
 Footer: `Cancel` (outline) + `Save` (primary, disabled until required fields filled).
+
+---
+
+## Submission Screen — Tri-Panel Document Workspace
+
+### Layout
+
+Three fixed horizontal regions inside the main content area:
+
+| Region | Width | Purpose |
+|---|---|---|
+| Stepper (left) | 220px fixed | Vertical dot-and-line progress indicator + Submission Steps sub-card |
+| Document Preview | ~65% of remaining | Uploaded form preview with Re-upload CTA |
+| AI Chat Panel | ~35% of remaining | Prompt-based document modification assistant |
+
+Stepper and content are separated by `1px solid #ECECEC`.  
+Document and Chat panels are separated by `1px solid #ECECEC` (no shadow).
+
+### Document Preview Panel
+
+```
+Header row (flexShrink: 0):
+  Left  — filename, 15px / 600 / #262A33
+  Right — cloud-upload icon + "Re Upload Form" link, 13px / 600 / #5C3FEE
+
+Preview frame:
+  border: 1px solid #ECECEC
+  borderRadius: 8px
+  flex: 1 (fills remaining height)
+  overflow: hidden
+  background: #F9FAFB
+  Uses <iframe> with object URL when a File is present; placeholder otherwise.
+```
+
+### AI Chat Panel
+
+```
+Container: flex column, separated from doc panel by 1px solid #ECECEC
+
+AI bubble (assistant message):
+  Left side: 32×32px circle, border: 1.5px solid #5C3FEE, contains plus-icon svg
+  Right: white card, border: 1px solid #ECECEC, borderRadius: 12px, padding: 12px 16px
+  Text: 14px / 400 / #757C8D
+
+User bubble:
+  Right-aligned, backgroundColor: #5C3FEE, borderRadius: 12px
+  Text: 13px / 400 / #FFFFFF
+
+Input row (flexShrink: 0, borderTop: 1px solid #ECECEC):
+  Transparent <input> with placeholder "Enter the prompt..."
+  Circular send button: 32×32px, backgroundColor: #5C3FEE, borderRadius: 50%
+  Icon: arrow-up svg, stroke: #FFFFFF
+```
+
+### Chevron Navigation
+
+Positioned at bottom of the full content area (below both panels), right-aligned.  
+Circular outline buttons: 40×40px, `border: 1.5px solid #5C3FEE` (enabled) / `#C8CDD6` (disabled).
+
+### Footer Action Bar
+
+Matches all other PA flow steps:  
+`Back to Risk` (outline) + `Submit` (primary, disabled until sub-step 3 + form uploaded).
