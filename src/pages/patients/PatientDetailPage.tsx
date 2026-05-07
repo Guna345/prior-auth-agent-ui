@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { patientDetails } from '../../data/patients'
 import DocumentPreviewModal from '../../components/patients/DocumentPreviewModal'
+import UploadPatientModal, { type PatientRow } from '../../components/patients/UploadPatientModal'
 
 const FONT = "'Space Grotesk', sans-serif"
 
@@ -9,7 +10,9 @@ export default function PatientDetailPage() {
   const { caseId = '' } = useParams()
   const navigate = useNavigate()
   const patient = patientDetails[caseId]
-  const [previewDoc, setPreviewDoc] = useState<string | null>(null)
+  const [previewDoc, setPreviewDoc]       = useState<string | null>(null)
+  const [uploadOpen, setUploadOpen]       = useState(false)
+  const [uploadedRows, setUploadedRows]   = useState<PatientRow[]>([])
 
   if (!patient) {
     return (
@@ -167,19 +170,48 @@ export default function PatientDetailPage() {
         </div>
       </div>
 
+      {/* Uploaded rows table (shown after update) */}
+      {uploadedRows.length > 0 && (
+        <div style={{ padding: '0 32px 28px' }}>
+          <p style={{ margin: '0 0 14px', fontSize: '15px', fontWeight: 600, color: '#262A33', fontFamily: FONT }}>Uploaded Patient Data</p>
+          <div style={{ border: '1px solid #ECECEC', borderRadius: '10px', overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#F9F9FF', borderBottom: '1px solid #ECECEC' }}>
+                  {['Patient ID', 'Name', 'Payer ID', 'Procedure Code', 'Diagnosis Code', 'Service Date', 'Status'].map(col => (
+                    <th key={col} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: 400, color: '#757C8D', fontFamily: FONT }}>{col}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {uploadedRows.map(row => (
+                  <tr key={row.id} style={{ borderBottom: '1px solid #ECECEC' }}>
+                    {[row.id, row.name, row.payerId, row.procedureCode, row.diagnosisCode, row.serviceDate, row.status].map((val, i) => (
+                      <td key={i} style={{ padding: '13px 16px', fontSize: '14px', color: '#262A33', fontFamily: FONT }}>{val}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Fixed bottom bar */}
       <div style={{
         position: 'sticky', bottom: 0, backgroundColor: '#FFFFFF',
         borderTop: '1px solid #ECECEC', padding: '16px 32px',
-        display: 'flex', justifyContent: 'flex-end', flexShrink: 0,
+        display: 'flex', justifyContent: 'flex-end', gap: '12px', flexShrink: 0,
       }}>
         <button
+          onClick={() => setUploadOpen(true)}
+          style={{ padding: '10px 24px', fontSize: '14px', fontWeight: 700, backgroundColor: 'transparent', color: '#5C3FEE', border: '1px solid #5C3FEE', borderRadius: '10px', cursor: 'pointer', fontFamily: FONT }}
+        >
+          Upload
+        </button>
+        <button
           onClick={() => navigate(`/patients/${caseId}/prior-auth`)}
-          style={{
-            padding: '10px 24px', fontSize: '14px', fontWeight: 700,
-            backgroundColor: '#5C3FEE', color: '#FFFFFF', border: 'none',
-            borderRadius: '10px', cursor: 'pointer', fontFamily: FONT,
-          }}
+          style={{ padding: '10px 24px', fontSize: '14px', fontWeight: 700, backgroundColor: '#5C3FEE', color: '#FFFFFF', border: 'none', borderRadius: '10px', cursor: 'pointer', fontFamily: FONT }}
         >
           Start Prior Auth
         </button>
@@ -188,6 +220,14 @@ export default function PatientDetailPage() {
       {/* Document preview modal */}
       {previewDoc && (
         <DocumentPreviewModal docName={previewDoc} onClose={() => setPreviewDoc(null)} />
+      )}
+
+      {/* Upload patient modal */}
+      {uploadOpen && (
+        <UploadPatientModal
+          onClose={() => setUploadOpen(false)}
+          onUpdate={rows => setUploadedRows(rows)}
+        />
       )}
     </div>
   )
