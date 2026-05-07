@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { formItems } from '../../data/configPanel'
+import type { FormItem } from '../../data/configPanel'
 import ConfigActionBtn from './ConfigActionBtn'
 import DeleteConfirmModal from '../ui/DeleteConfirmModal'
 import Pagination from '../ui/Pagination'
+import FormPreviewModal from './FormPreviewModal'
 
 const PAGE_SIZE = 9
 
@@ -20,6 +22,7 @@ const tdStyle: React.CSSProperties = {
 export default function FormManagementTab(): React.JSX.Element {
   const [data, setData] = useState(formItems)
   const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null)
+  const [previewForm, setPreviewForm] = useState<FormItem | null>(null)
   const [page, setPage] = useState(1)
   const totalPages = Math.ceil(data.length / PAGE_SIZE)
   const paginated = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -49,7 +52,7 @@ export default function FormManagementTab(): React.JSX.Element {
               <td style={{ ...tdStyle, color: '#757C8D' }}>{row.payerName}</td>
               <td style={tdStyle}>
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  <ConfigActionBtn icon="view" onClick={() => {}} />
+                  <ConfigActionBtn icon="view" onClick={() => setPreviewForm(row)} />
                   <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(dataIdx)} />
                 </div>
               </td>
@@ -60,6 +63,9 @@ export default function FormManagementTab(): React.JSX.Element {
       </table>
     </div>
     <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+    {previewForm && (
+      <FormPreviewModal form={previewForm} onClose={() => setPreviewForm(null)} />
+    )}
     {pendingDeleteIdx !== null && (
       <DeleteConfirmModal
         message="Are you sure you want to delete this form?"
