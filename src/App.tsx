@@ -8,6 +8,9 @@ import AirHandlingPage from './pages/air-handling/AirHandlingPage'
 import CaseDetailPage from './pages/air-handling/CaseDetailPage'
 import UserManagementPage from './pages/users/UserManagementPage'
 import ConfigurationPage from './pages/configuration/ConfigurationPage'
+import PatientListPage from './pages/patients/PatientListPage'
+import PatientDetailPage from './pages/patients/PatientDetailPage'
+import PriorAuthPage from './pages/patients/PriorAuthPage'
 import AppLayout from './components/layout/AppLayout'
 import './App.css'
 
@@ -68,6 +71,38 @@ export default function App() {
               <ProtectedRoute>
                 <AppLayout>
                   <ConfigurationPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/patients"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <PatientListPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/patients/:caseId"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <PatientDetailPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/patients/:caseId/prior-auth"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <PriorAuthPage />
                 </AppLayout>
               </ProtectedRoute>
             }
