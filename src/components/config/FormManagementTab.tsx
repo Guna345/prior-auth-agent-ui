@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { formItems } from '../../data/configPanel'
 import ConfigActionBtn from './ConfigActionBtn'
 import DeleteConfirmModal from '../ui/DeleteConfirmModal'
+import Pagination from '../ui/Pagination'
+
+const PAGE_SIZE = 9
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -17,6 +20,9 @@ const tdStyle: React.CSSProperties = {
 export default function FormManagementTab(): React.JSX.Element {
   const [data, setData] = useState(formItems)
   const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null)
+  const [page, setPage] = useState(1)
+  const totalPages = Math.ceil(data.length / PAGE_SIZE)
+  const paginated = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   return (
     <>
     <div style={{ border: '1px solid #ECECEC', borderRadius: '10px', overflow: 'hidden' }}>
@@ -30,8 +36,10 @@ export default function FormManagementTab(): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, i) => (
-            <tr key={i}
+          {paginated.map((row, i) => {
+            const dataIdx = (page - 1) * PAGE_SIZE + i
+            return (
+            <tr key={dataIdx}
               style={{ backgroundColor: '#FFFFFF' }}
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F9F9FF')}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
@@ -42,14 +50,16 @@ export default function FormManagementTab(): React.JSX.Element {
               <td style={tdStyle}>
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <ConfigActionBtn icon="view" onClick={() => {}} />
-                  <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(i)} />
+                  <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(dataIdx)} />
                 </div>
               </td>
             </tr>
-          ))}
+            )
+          })}
         </tbody>
       </table>
     </div>
+    <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     {pendingDeleteIdx !== null && (
       <DeleteConfirmModal
         message="Are you sure you want to delete this form?"

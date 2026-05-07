@@ -2,6 +2,9 @@ import { useState } from 'react'
 import type { User } from '../../types/user'
 import Badge from '../ui/Badge'
 import DeleteConfirmModal from '../ui/DeleteConfirmModal'
+import Pagination from '../ui/Pagination'
+
+const PAGE_SIZE = 9
 
 interface UserTableProps {
   users: User[]
@@ -120,6 +123,9 @@ function TableRow({ user, onView, onEdit, onDelete }: {
 
 export default function UserTable({ users, onView, onEdit, onDelete }: UserTableProps) {
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const [page, setPage] = useState(1)
+  const totalPages = Math.ceil(users.length / PAGE_SIZE)
+  const paginated = users.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   return (
     <>
     <div style={{ padding: '24px' }}>
@@ -141,7 +147,7 @@ export default function UserTable({ users, onView, onEdit, onDelete }: UserTable
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
+          {paginated.map(user => (
             <TableRow
               key={user.id}
               user={user}
@@ -153,6 +159,7 @@ export default function UserTable({ users, onView, onEdit, onDelete }: UserTable
         </tbody>
       </table>
       </div>
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </div>
     {pendingDeleteId !== null && (
       <DeleteConfirmModal

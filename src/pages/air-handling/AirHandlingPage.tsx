@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { airCases } from '../../data/airHandling'
 import type { CaseStatus } from '../../types/airHandling'
+import Pagination from '../../components/ui/Pagination'
+
+const PAGE_SIZE = 9
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left',
@@ -51,6 +54,7 @@ export default function AirHandlingPage() {
   const [searchFocused, setSearchFocused] = useState(false)
   const [statusFilter, setStatusFilter] = useState<'All' | CaseStatus>('All')
   const [filterOpen, setFilterOpen] = useState(false)
+  const [page, setPage] = useState(1)
 
   const filtered = airCases.filter(c => {
     const matchesSearch =
@@ -59,6 +63,8 @@ export default function AirHandlingPage() {
     const matchesStatus = statusFilter === 'All' || c.status === statusFilter
     return matchesSearch && matchesStatus
   })
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#FFFFFF', fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -83,7 +89,7 @@ export default function AirHandlingPage() {
             </svg>
             <input
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
               placeholder="Search by Patient Name, ID"
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
@@ -127,7 +133,7 @@ export default function AirHandlingPage() {
                 {(['All', 'Approved', 'Denied'] as const).map((opt, i, arr) => (
                   <div
                     key={opt}
-                    onClick={() => { setStatusFilter(opt); setFilterOpen(false) }}
+                    onClick={() => { setStatusFilter(opt); setFilterOpen(false); setPage(1) }}
                     style={{
                       padding: '11px 16px', fontSize: '14px', cursor: 'pointer',
                       color: statusFilter === opt ? '#5C3FEE' : '#262A33',
@@ -161,7 +167,7 @@ export default function AirHandlingPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(c => (
+              {paginated.map(c => (
                 <tr key={c.caseId} style={{ backgroundColor: '#FFFFFF' }}
                   onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F9F9FF')}
                   onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
@@ -190,6 +196,7 @@ export default function AirHandlingPage() {
             </tbody>
           </table>
         </div>
+        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
       </div>
     </div>
   )

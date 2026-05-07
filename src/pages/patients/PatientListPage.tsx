@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { patients } from '../../data/patients'
 import type { PatientStatus } from '../../types/patients'
 import UploadPatientModal from '../../components/patients/UploadPatientModal'
+import Pagination from '../../components/ui/Pagination'
+
+const PAGE_SIZE = 9
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -53,6 +56,7 @@ export default function PatientListPage() {
   const [statusFilter, setStatusFilter] = useState<'All' | PatientStatus>('All')
   const [filterOpen, setFilterOpen] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     if (completedCaseId) {
@@ -68,6 +72,8 @@ export default function PatientListPage() {
     const matchStatus = statusFilter === 'All' || p.status === statusFilter
     return matchSearch && matchStatus
   })
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#FFFFFF', fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -98,7 +104,7 @@ export default function PatientListPage() {
               type="text"
               placeholder="Search by Patient Name, ID"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               style={{
@@ -145,7 +151,7 @@ export default function PatientListPage() {
                   {(['All', ...ALL_STATUSES] as const).map(s => (
                     <button
                       key={s}
-                      onClick={() => { setStatusFilter(s); setFilterOpen(false) }}
+                      onClick={() => { setStatusFilter(s); setFilterOpen(false); setPage(1) }}
                       style={{
                         display: 'block', width: '100%', textAlign: 'left',
                         padding: '10px 16px', fontSize: '14px', cursor: 'pointer',
@@ -196,7 +202,7 @@ export default function PatientListPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p, i) => (
+              {paginated.map((p, i) => (
                 <tr
                   key={p.caseId}
                   style={{ backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#FAFAFA' }}
@@ -233,6 +239,7 @@ export default function PatientListPage() {
             </div>
           )}
         </div>
+        <Pagination page={page} totalPages={totalPages} onChange={p => { setPage(p) }} />
       </div>
 
       {uploadOpen && (

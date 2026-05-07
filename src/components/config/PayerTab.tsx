@@ -5,6 +5,9 @@ import ConfigActionBtn from './ConfigActionBtn'
 import PayerModal from './PayerModal'
 import type { PayerFormData } from './PayerModal'
 import DeleteConfirmModal from '../ui/DeleteConfirmModal'
+import Pagination from '../ui/Pagination'
+
+const PAGE_SIZE = 9
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -44,6 +47,9 @@ export default function PayerTab({ addOpen = false, onAddClose }: PayerTabProps)
   const [data, setData] = useState<Payer[]>(payers)
   const [editIdx, setEditIdx] = useState<number | null>(null)
   const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null)
+  const [page, setPage] = useState(1)
+  const totalPages = Math.ceil(data.length / PAGE_SIZE)
+  const paginated = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   function handleSave(vals: PayerFormData) {
     const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
@@ -88,8 +94,10 @@ export default function PayerTab({ addOpen = false, onAddClose }: PayerTabProps)
             </tr>
           </thead>
           <tbody>
-            {data.map((row, i) => (
-              <tr key={i}
+            {paginated.map((row, i) => {
+              const dataIdx = (page - 1) * PAGE_SIZE + i
+              return (
+              <tr key={dataIdx}
                 style={{ backgroundColor: '#FFFFFF' }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F9F9FF')}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
@@ -100,15 +108,18 @@ export default function PayerTab({ addOpen = false, onAddClose }: PayerTabProps)
                 <td style={{ ...tdStyle, color: '#757C8D' }}>{row.lastSync}</td>
                 <td style={tdStyle}>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <ConfigActionBtn icon="edit" onClick={() => setEditIdx(i)} />
-                    <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(i)} />
+                    <ConfigActionBtn icon="edit" onClick={() => setEditIdx(dataIdx)} />
+                    <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(dataIdx)} />
                   </div>
                 </td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       {pendingDeleteIdx !== null && (
         <DeleteConfirmModal
