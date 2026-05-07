@@ -43,13 +43,13 @@ export default function DeleteConfirmModal({ message, onConfirm, onCancel }: Del
           <button
             onClick={onCancel}
             style={{
-              flex: 1, padding: '12px', fontSize: '15px', fontWeight: 500,
-              backgroundColor: '#F2F2F2', color: '#262A33',
-              border: 'none', borderRadius: '12px', cursor: 'pointer',
+              flex: 1, padding: '12px', fontSize: '15px', fontWeight: 600,
+              backgroundColor: '#FFFFFF', color: '#5C3FEE',
+              border: '1.5px solid #5C3FEE', borderRadius: '12px', cursor: 'pointer',
               fontFamily: FONT, transition: 'background 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#E8E8E8')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#F2F2F2')}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F7F5FF')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
           >
             No
           </button>
@@ -57,12 +57,12 @@ export default function DeleteConfirmModal({ message, onConfirm, onCancel }: Del
             onClick={onConfirm}
             style={{
               flex: 1, padding: '12px', fontSize: '15px', fontWeight: 600,
-              backgroundColor: '#4361EE', color: '#FFFFFF',
+              backgroundColor: '#5C3FEE', color: '#FFFFFF',
               border: 'none', borderRadius: '12px', cursor: 'pointer',
               fontFamily: FONT, transition: 'background 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#3451D1')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#4361EE')}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#4B32D0')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#5C3FEE')}
           >
             Yes
           </button>
