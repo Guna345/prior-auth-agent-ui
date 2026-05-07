@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { CI_RESULTS } from '../../data/clinicalIntelligence'
+import ClinicalReferenceModal from './ClinicalReferenceModal'
 
 const FONT = "'Space Grotesk', sans-serif"
 
 export default function ClinicalIntelligenceResults() {
+  const [refOpen, setRefOpen] = useState(false)
   return (
     <div style={{ padding: '28px 32px', overflowY: 'auto', flex: 1 }}>
       <h2 style={{ margin: '0 0 24px', fontSize: '18px', fontWeight: 700, color: '#262A33', fontFamily: FONT }}>
@@ -28,7 +31,7 @@ export default function ClinicalIntelligenceResults() {
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FECDD3', flexShrink: 0, marginTop: '4px' }} />
               <span style={{ fontSize: '14px', color: '#262A33', fontFamily: FONT, lineHeight: '1.5' }}>
                 {d.text}&nbsp;
-                <span style={{ fontSize: '13px', color: '#5C3FEE', textDecoration: 'underline', cursor: 'pointer' }}>Reference</span>
+                <span onClick={() => setRefOpen(true)} style={{ fontSize: '13px', color: '#5C3FEE', textDecoration: 'underline', cursor: 'pointer' }}>Reference</span>
               </span>
             </div>
           ))}
@@ -96,6 +99,8 @@ export default function ClinicalIntelligenceResults() {
           </p>
         </div>
       </div>
+
+      {refOpen && <ClinicalReferenceModal onClose={() => setRefOpen(false)} />}
     </div>
   )
 }
