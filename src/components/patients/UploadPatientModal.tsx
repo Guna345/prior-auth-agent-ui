@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import FileUploadZone from '../ui/FileUploadZone'
+import DeleteConfirmModal from '../ui/DeleteConfirmModal'
 
 const PURPLE = '#5C3FEE'
 const FONT   = "'Space Grotesk', sans-serif"
@@ -32,8 +33,9 @@ interface UploadPatientModalProps {
 }
 
 export default function UploadPatientModal({ onClose, onUpdate }: UploadPatientModalProps) {
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-  const [rows, setRows]                 = useState<PatientRow[]>([])
+  const [uploadedFile, setUploadedFile]     = useState<File | null>(null)
+  const [rows, setRows]                     = useState<PatientRow[]>([])
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   function handleFile(file: File) {
     setUploadedFile(file)
@@ -64,6 +66,7 @@ export default function UploadPatientModal({ onClose, onUpdate }: UploadPatientM
 
   function deleteRow(id: string) {
     setRows(prev => prev.filter(r => r.id !== id))
+    setPendingDeleteId(null)
   }
 
   function handleUpdate() {
@@ -125,7 +128,7 @@ export default function UploadPatientModal({ onClose, onUpdate }: UploadPatientM
                       <td style={td}>{row.status}</td>
                       <td style={{ padding: '10px 16px' }}>
                         <button
-                          onClick={() => deleteRow(row.id)}
+                          onClick={() => setPendingDeleteId(row.id)}
                           style={{ width: '32px', height: '32px', borderRadius: '6px', border: '1px solid #E03B3B', backgroundColor: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#FFEBEE')}
                           onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
@@ -145,6 +148,14 @@ export default function UploadPatientModal({ onClose, onUpdate }: UploadPatientM
             </div>
           )}
         </div>
+
+        {pendingDeleteId && (
+          <DeleteConfirmModal
+            message="Are you sure you want to delete this patient detail?"
+            onConfirm={() => deleteRow(pendingDeleteId)}
+            onCancel={() => setPendingDeleteId(null)}
+          />
+        )}
 
         {/* Footer */}
         <div style={{ padding: '16px 28px', borderTop: '1px solid #ECECEC', flexShrink: 0, display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>

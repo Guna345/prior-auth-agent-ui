@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formItems } from '../../data/configPanel'
 import ConfigActionBtn from './ConfigActionBtn'
+import DeleteConfirmModal from '../ui/DeleteConfirmModal'
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -15,7 +16,9 @@ const tdStyle: React.CSSProperties = {
 
 export default function FormManagementTab(): React.JSX.Element {
   const [data, setData] = useState(formItems)
+  const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null)
   return (
+    <>
     <div style={{ border: '1px solid #ECECEC', borderRadius: '10px', overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
@@ -39,7 +42,7 @@ export default function FormManagementTab(): React.JSX.Element {
               <td style={tdStyle}>
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <ConfigActionBtn icon="view" onClick={() => {}} />
-                  <ConfigActionBtn icon="delete" danger onClick={() => setData(d => d.filter((_, idx) => idx !== i))} />
+                  <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(i)} />
                 </div>
               </td>
             </tr>
@@ -47,5 +50,13 @@ export default function FormManagementTab(): React.JSX.Element {
         </tbody>
       </table>
     </div>
+    {pendingDeleteIdx !== null && (
+      <DeleteConfirmModal
+        message="Are you sure you want to delete this form?"
+        onConfirm={() => { setData(d => d.filter((_, idx) => idx !== pendingDeleteIdx)); setPendingDeleteIdx(null) }}
+        onCancel={() => setPendingDeleteIdx(null)}
+      />
+    )}
+    </>
   )
 }

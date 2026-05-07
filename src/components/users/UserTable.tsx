@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { User } from '../../types/user'
 import Badge from '../ui/Badge'
+import DeleteConfirmModal from '../ui/DeleteConfirmModal'
 
 interface UserTableProps {
   users: User[]
@@ -118,7 +119,9 @@ function TableRow({ user, onView, onEdit, onDelete }: {
 }
 
 export default function UserTable({ users, onView, onEdit, onDelete }: UserTableProps) {
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
   return (
+    <>
     <div style={{ padding: '24px' }}>
       <div style={{
         border: '1px solid #ECECEC',
@@ -144,12 +147,20 @@ export default function UserTable({ users, onView, onEdit, onDelete }: UserTable
               user={user}
               onView={onView}
               onEdit={onEdit}
-              onDelete={onDelete}
+              onDelete={id => setPendingDeleteId(id)}
             />
           ))}
         </tbody>
       </table>
       </div>
     </div>
+    {pendingDeleteId !== null && (
+      <DeleteConfirmModal
+        message="Are you sure you want to delete this user?"
+        onConfirm={() => { onDelete(pendingDeleteId); setPendingDeleteId(null) }}
+        onCancel={() => setPendingDeleteId(null)}
+      />
+    )}
+    </>
   )
 }

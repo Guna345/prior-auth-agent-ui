@@ -4,6 +4,7 @@ import type { Rule, RuleStatus } from '../../data/configPanel'
 import ConfigActionBtn from './ConfigActionBtn'
 import RuleModal from './RuleModal'
 import type { RuleFormData } from './RuleModal'
+import DeleteConfirmModal from '../ui/DeleteConfirmModal'
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -41,6 +42,7 @@ let nextRuleId = 12
 export default function RulesTab({ addOpen = false, onAddClose }: RulesTabProps): React.JSX.Element {
   const [data, setData] = useState<Rule[]>(rules)
   const [editIdx, setEditIdx] = useState<number | null>(null)
+  const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null)
 
   function handleSave(vals: RuleFormData) {
     if (editIdx !== null) {
@@ -104,7 +106,7 @@ export default function RulesTab({ addOpen = false, onAddClose }: RulesTabProps)
                 <td style={tdStyle}>
                   <div style={{ display: 'flex', gap: '6px' }}>
                     <ConfigActionBtn icon="edit" onClick={() => setEditIdx(i)} />
-                    <ConfigActionBtn icon="delete" danger onClick={() => setData(d => d.filter((_, idx) => idx !== i))} />
+                    <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(i)} />
                   </div>
                 </td>
               </tr>
@@ -112,6 +114,14 @@ export default function RulesTab({ addOpen = false, onAddClose }: RulesTabProps)
           </tbody>
         </table>
       </div>
+
+      {pendingDeleteIdx !== null && (
+        <DeleteConfirmModal
+          message="Are you sure you want to delete this rule?"
+          onConfirm={() => { setData(d => d.filter((_, idx) => idx !== pendingDeleteIdx)); setPendingDeleteIdx(null) }}
+          onCancel={() => setPendingDeleteIdx(null)}
+        />
+      )}
 
       {editIdx !== null && (
         <RuleModal

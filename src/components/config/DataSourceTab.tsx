@@ -4,6 +4,7 @@ import type { DataSource } from '../../data/configPanel'
 import ConfigActionBtn from './ConfigActionBtn'
 import DataSourceModal from './DataSourceModal'
 import type { DataSourceFormData } from './DataSourceModal'
+import DeleteConfirmModal from '../ui/DeleteConfirmModal'
 
 const thStyle: React.CSSProperties = {
   textAlign: 'left', padding: '12px 16px', fontSize: '14px',
@@ -24,6 +25,7 @@ interface DataSourceTabProps {
 export default function DataSourceTab({ addOpen = false, onAddClose }: DataSourceTabProps): React.JSX.Element {
   const [data, setData] = useState<DataSource[]>(dataSources)
   const [editIdx, setEditIdx] = useState<number | null>(null)
+  const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null)
 
   function handleSave(vals: DataSourceFormData) {
     if (editIdx !== null) {
@@ -79,7 +81,7 @@ export default function DataSourceTab({ addOpen = false, onAddClose }: DataSourc
                 <td style={tdStyle}>
                   <div style={{ display: 'flex', gap: '6px' }}>
                     <ConfigActionBtn icon="edit" onClick={() => setEditIdx(i)} />
-                    <ConfigActionBtn icon="delete" danger onClick={() => setData(d => d.filter((_, idx) => idx !== i))} />
+                    <ConfigActionBtn icon="delete" danger onClick={() => setPendingDeleteIdx(i)} />
                   </div>
                 </td>
               </tr>
@@ -87,6 +89,14 @@ export default function DataSourceTab({ addOpen = false, onAddClose }: DataSourc
           </tbody>
         </table>
       </div>
+
+      {pendingDeleteIdx !== null && (
+        <DeleteConfirmModal
+          message="Are you sure you want to delete this data source?"
+          onConfirm={() => { setData(d => d.filter((_, idx) => idx !== pendingDeleteIdx)); setPendingDeleteIdx(null) }}
+          onCancel={() => setPendingDeleteIdx(null)}
+        />
+      )}
 
       {editIdx !== null && (
         <DataSourceModal
