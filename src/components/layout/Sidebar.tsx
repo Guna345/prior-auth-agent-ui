@@ -94,7 +94,7 @@ export default function Sidebar() {
       {/* Nav */}
       <nav className="flex-1 px-3 space-y-0.5">
         {navItems.map(item => {
-          const active = location.pathname === item.path
+          const active = location.pathname === item.path || location.pathname.startsWith(item.path + '/')
           return (
             <button
               key={item.path}
